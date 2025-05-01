@@ -1,0 +1,47 @@
+name: Golang
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  go_lint:
+    name: Lint
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: go-lint
+        uses: golangci/golangci-lint-action@v7
+      - name: go-vet
+        run: |
+          make vet
+
+  go_test:
+    name: Test
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: test
+        run: |
+          make test
+
+  diff:
+    name: Diff
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: diff
+        run: |
+          git diff --exit-code
