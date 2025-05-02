@@ -6,14 +6,14 @@ import (
 )
 
 const (
-	defaultComponent = "default"
+	DefaultComponent = "default"
 )
 
 // componentLeveler maps component names to their respective slog.LevelVar instance
 var componentLeveler sync.Map
 
 func init() {
-	defaultLogger := New(defaultComponent)
+	defaultLogger := New(DefaultComponent)
 	slog.SetDefault(defaultLogger)
 }
 

@@ -25,7 +25,7 @@ func TestLogging(t *testing.T) {
 			name:           "only default logger",
 			wantStatusCode: http.StatusOK,
 			wantLevels: map[string]slog.Level{
-				defaultComponent: GlobalLevel.Level(),
+				DefaultComponent: GlobalLevel.Level(),
 			},
 		},
 		{
@@ -33,7 +33,7 @@ func TestLogging(t *testing.T) {
 			query:          "level=debug",
 			wantStatusCode: http.StatusOK,
 			wantLevels: map[string]slog.Level{
-				defaultComponent: slog.LevelDebug,
+				DefaultComponent: slog.LevelDebug,
 			},
 		},
 		{
@@ -42,7 +42,7 @@ func TestLogging(t *testing.T) {
 			query:          "level=debug",
 			wantStatusCode: http.StatusOK,
 			wantLevels: map[string]slog.Level{
-				defaultComponent: slog.LevelDebug,
+				DefaultComponent: slog.LevelDebug,
 				"c1":             slog.LevelDebug,
 				"c2":             slog.LevelDebug,
 				"c3":             slog.LevelDebug,
@@ -54,7 +54,7 @@ func TestLogging(t *testing.T) {
 			query:          "level=debug&c1=error&c2=warn&c3=trace",
 			wantStatusCode: http.StatusOK,
 			wantLevels: map[string]slog.Level{
-				defaultComponent: slog.LevelDebug,
+				DefaultComponent: slog.LevelDebug,
 				"c1":             slog.LevelDebug,
 				"c2":             slog.LevelDebug,
 				"c3":             slog.LevelDebug,
@@ -66,7 +66,7 @@ func TestLogging(t *testing.T) {
 			query:          "default=debug&c1=error&c2=warn&c3=trace",
 			wantStatusCode: http.StatusOK,
 			wantLevels: map[string]slog.Level{
-				defaultComponent: slog.LevelDebug,
+				DefaultComponent: slog.LevelDebug,
 				"c1":             slog.LevelError,
 				"c2":             slog.LevelWarn,
 				"c3":             LevelTrace,
@@ -78,7 +78,7 @@ func TestLogging(t *testing.T) {
 			wantStatusCode: http.StatusBadRequest,
 			wantBody:       "unknown log level foo",
 			wantLevels: map[string]slog.Level{
-				defaultComponent: slog.LevelInfo,
+				DefaultComponent: slog.LevelInfo,
 			},
 		},
 		{
@@ -97,7 +97,7 @@ func TestLogging(t *testing.T) {
 			setLevel:       map[string]slog.Level{"default": slog.LevelDebug, "c1": slog.LevelError, "c2": slog.LevelWarn, "c3": LevelTrace},
 			wantStatusCode: http.StatusOK,
 			wantLevels: map[string]slog.Level{
-				defaultComponent: slog.LevelDebug,
+				DefaultComponent: slog.LevelDebug,
 				"c1":             slog.LevelError,
 				"c2":             slog.LevelWarn,
 				"c3":             LevelTrace,
@@ -112,7 +112,7 @@ func TestLogging(t *testing.T) {
 			// Reset component levels to default level
 			Reset(slog.LevelInfo)
 
-			loggers := map[string]*slog.Logger{defaultComponent: slog.Default()}
+			loggers := map[string]*slog.Logger{DefaultComponent: slog.Default()}
 			for _, component := range tc.components {
 				logger := New(component)
 				a.NotNil(logger)
