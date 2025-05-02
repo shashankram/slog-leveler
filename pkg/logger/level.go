@@ -37,7 +37,7 @@ var (
 // GetLevel returns the current log level for the component
 func GetLevel(component string) (slog.Level, error) {
 	if component == "" {
-		component = defaultComponent
+		component = DefaultComponent
 	}
 	lvl, ok := componentLeveler.Load(component)
 	if !ok {
@@ -59,7 +59,7 @@ func MustGetLevel(component string) slog.Level {
 // SetLevel sets the log level for the component
 func SetLevel(component string, level slog.Level) error {
 	if component == "" {
-		component = defaultComponent
+		component = DefaultComponent
 	}
 	lvl, ok := componentLeveler.Load(component)
 	if !ok {
