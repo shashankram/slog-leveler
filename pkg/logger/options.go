@@ -9,7 +9,7 @@ import (
 // Options to configure the logger
 type Options struct {
 	// Logger level
-	Level slog.Level
+	Level *slog.Level
 
 	// Log format: text or json
 	Format LogFormat

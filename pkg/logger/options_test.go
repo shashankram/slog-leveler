@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shashankram/slog-leveler/pkg/utils/ptr"
 )
 
 func TestOptions(t *testing.T) {
@@ -18,7 +20,6 @@ func TestOptions(t *testing.T) {
 			name: "default options",
 			opts: Options{},
 			want: Options{
-				Level:  slog.LevelInfo,
 				Format: TextFormat,
 				Writer: os.Stderr,
 			},
@@ -26,13 +27,13 @@ func TestOptions(t *testing.T) {
 		{
 			name: "custom options",
 			opts: Options{
-				Level:     slog.LevelDebug,
+				Level:     ptr.To(slog.LevelDebug),
 				Format:    JSONFormat,
 				Writer:    nil,
 				AddSource: true,
 			},
 			want: Options{
-				Level:     slog.LevelDebug,
+				Level:     ptr.To(slog.LevelDebug),
 				Format:    JSONFormat,
 				Writer:    os.Stderr,
 				AddSource: true,
