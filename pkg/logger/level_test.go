@@ -147,3 +147,16 @@ func TestLogging(t *testing.T) {
 		})
 	}
 }
+
+func TestGetComponentLevels(t *testing.T) {
+	a := assert.New(t)
+
+	_ = New("foo")
+	_ = NewWithOptions("bar", Options{Level: slog.LevelDebug})
+	_ = NewWithOptions("baz", Options{Level: slog.LevelError})
+
+	got := GetComponentLevels()
+	a.Equal(slog.LevelInfo, got["foo"], "foo")
+	a.Equal(slog.LevelDebug, got["bar"], "bar")
+	a.Equal(slog.LevelError, got["baz"], "baz")
+}
