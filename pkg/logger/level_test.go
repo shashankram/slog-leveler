@@ -9,6 +9,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/shashankram/slog-leveler/pkg/utils/ptr"
 )
 
 func TestLogging(t *testing.T) {
@@ -151,12 +153,10 @@ func TestLogging(t *testing.T) {
 func TestGetComponentLevels(t *testing.T) {
 	a := assert.New(t)
 
-	_ = New("foo")
-	_ = NewWithOptions("bar", Options{Level: slog.LevelDebug})
-	_ = NewWithOptions("baz", Options{Level: slog.LevelError})
+	_ = NewWithOptions("TestGetComponentLevels1", Options{Level: ptr.To(slog.LevelDebug)})
+	_ = NewWithOptions("TestGetComponentLevels2", Options{Level: ptr.To(slog.LevelError)})
 
 	got := GetComponentLevels()
-	a.Equal(slog.LevelInfo, got["foo"], "foo")
-	a.Equal(slog.LevelDebug, got["bar"], "bar")
-	a.Equal(slog.LevelError, got["baz"], "baz")
+	a.Equal(slog.LevelDebug, got["TestGetComponentLevels1"], "TestGetComponentLevels1")
+	a.Equal(slog.LevelError, got["TestGetComponentLevels2"], "TestGetComponentLevels2")
 }
