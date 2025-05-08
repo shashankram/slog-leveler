@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"fmt"
 	"log/slog"
 	"sync"
 )
@@ -41,16 +42,27 @@ func NewWithOptions(component string, opts Options) *slog.Logger {
 		ReplaceAttr: slogLevelReplacer,
 	}
 
+	attrs := []slog.Attr{{Key: "component", Value: slog.StringValue(component)}}
+
 	componentLeveler.Store(component, level)
 	var slogHandler slog.Handler
 	switch opts.Format {
 	case TextFormat:
-		slogHandler = slog.NewTextHandler(opts.Writer, handlerOpts)
+		slogHandler = slog.NewTextHandler(opts.Writer, handlerOpts).WithAttrs(attrs)
 	case JSONFormat:
-		slogHandler = slog.NewJSONHandler(opts.Writer, handlerOpts)
+		slogHandler = slog.NewJSONHandler(opts.Writer, handlerOpts).WithAttrs(attrs)
 	default:
-		slogHandler = slog.NewTextHandler(opts.Writer, handlerOpts)
+		slogHandler = slog.NewTextHandler(opts.Writer, handlerOpts).WithAttrs(attrs)
 	}
 
 	return slog.New(slogHandler)
+}
+
+// DeleteLeveler deletes the leveler instance for the given component
+func DeleteLeveler(component string) error {
+	if component == "" {
+		return fmt.Errorf("component unspecified")
+	}
+	componentLeveler.Delete(component)
+	return nil
 }

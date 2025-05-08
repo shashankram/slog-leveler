@@ -28,4 +28,15 @@ func main() {
 	fooLogger.Log(context.Background(), logger.LevelTrace, "This won't be printed")
 	logger.SetLevel("foo", logger.LevelTrace) // nolint: errcheck
 	fooLogger.Log(context.Background(), logger.LevelTrace, "This will be printed")
+
+	// Managing short-lived loggers
+	for range 3 {
+		someFunc()
+	}
+}
+
+func someFunc() {
+	l := logger.New("tmp")
+	defer logger.DeleteLeveler("tmp") // nolint: errcheck
+	l.Info("tmp info")
 }
