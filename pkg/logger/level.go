@@ -203,3 +203,13 @@ func LevelToString(level slog.Level) string {
 		return level.String()
 	}
 }
+
+// GetComponentLevels returns a map of component names to their respective log levels
+func GetComponentLevels() map[string]slog.Level {
+	levels := make(map[string]slog.Level)
+	componentLeveler.Range(func(key any, value any) bool {
+		levels[key.(string)] = value.(*slog.LevelVar).Level()
+		return true
+	})
+	return levels
+}
