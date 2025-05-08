@@ -100,7 +100,7 @@ func HTTPLevelHandler(w http.ResponseWriter, r *http.Request) {
 
 	componentValues := r.URL.Query()
 	if lvl := componentValues.Get(levelQuery); lvl != "" {
-		level, err := parseLevel(lvl)
+		level, err := ParseLevel(lvl)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
@@ -119,7 +119,7 @@ func HTTPLevelHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		level, err := parseLevel(l)
+		level, err := ParseLevel(l)
 		if err != nil {
 			http.Error(w, fmt.Sprintf("component %s: %v", component, err), http.StatusBadRequest)
 			return
@@ -142,7 +142,7 @@ func HTTPLevelHandler(w http.ResponseWriter, r *http.Request) {
 		// Print current component log levels
 		w.Write([]byte("current log levels:\n---\n")) // nolint: errcheck
 		componentLeveler.Range(func(key any, value any) bool {
-			w.Write(fmt.Appendf(nil, "%s: %s\n", key, slogLevelToString(value.(*slog.LevelVar).Level()))) // nolint: errcheck
+			w.Write(fmt.Appendf(nil, "%s: %s\n", key, LevelToString(value.(*slog.LevelVar).Level()))) // nolint: errcheck
 			return true
 		})
 	}
@@ -167,7 +167,9 @@ func levelName(level slog.Level) string {
 	return levelname
 }
 
-func parseLevel(level string) (slog.Level, error) {
+// ParseLevel parses the given level string to slog.Level,
+// and returns an error if the level is unknown
+func ParseLevel(level string) (slog.Level, error) {
 	switch strings.ToLower(level) {
 	case traceLevel:
 		return LevelTrace, nil
@@ -184,7 +186,8 @@ func parseLevel(level string) (slog.Level, error) {
 	}
 }
 
-func slogLevelToString(level slog.Level) string {
+// LevelToString returns the string representation of slog.Level
+func LevelToString(level slog.Level) string {
 	switch level {
 	case LevelTrace:
 		return traceLevel
