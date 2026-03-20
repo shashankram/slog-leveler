@@ -13,6 +13,8 @@ go get github.com/shashankram/slog-leveler
 ```go
 import "github.com/shashankram/slog-leveler/pkg/logger"
 
+logger.SetDefault()
+
 // Default logger
 slog.Info("Hello world")
 slog.Debug("This won't be printed")

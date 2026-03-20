@@ -16,6 +16,8 @@ import (
 )
 
 func main() {
+	logger.SetDefault()
+
 	exitChan := make(chan os.Signal, 1)
 	// Notify the channel of SIGINT and SIGTERM signals.
 	signal.Notify(exitChan, syscall.SIGINT, syscall.SIGTERM)
@@ -57,7 +59,7 @@ func main() {
 	mux.HandleFunc("/logging", logger.HTTPLevelHandler)
 
 	go func() {
-		fmt.Println("Server listening on port 8080")
+		fmt.Println("Server listening on port 15000")
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %v", err)
 		}

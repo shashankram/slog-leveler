@@ -16,6 +16,8 @@ import (
 )
 
 func main() {
+	logger.SetDefault()
+
 	exitChan := make(chan os.Signal, 1)
 	// Notify the channel of SIGINT and SIGTERM signals.
 	signal.Notify(exitChan, syscall.SIGINT, syscall.SIGTERM)

@@ -9,6 +9,8 @@ import (
 )
 
 func main() {
+	logger.SetDefault()
+
 	// Default logger
 	slog.Info("Hello world")
 	slog.Debug("This won't be printed")
