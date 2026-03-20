@@ -13,7 +13,9 @@ const (
 // componentLeveler maps component names to their respective slog.LevelVar instance
 var componentLeveler sync.Map
 
-func init() {
+// SetDefault creates the default component logger and sets it as the slog default.
+// This must be called before using the default logger or any component loggers.
+func SetDefault() {
 	defaultLogger := New(DefaultComponent)
 	slog.SetDefault(defaultLogger)
 }
@@ -24,8 +26,8 @@ func New(component string) *slog.Logger {
 	return NewWithOptions(component, Options{})
 }
 
-// NewWithOptions returns a new slog.Logger instance for the given component with the provided Options
-// If the component is empty, it returns the default logger.
+// NewWithOptions returns a new slog.Logger instance for the given component with the provided Options.
+// If the component is empty, the provided Options are ignored and the default logger is returned as-is.
 func NewWithOptions(component string, opts Options) *slog.Logger {
 	if component == "" {
 		return slog.Default()
@@ -65,7 +67,9 @@ func NewWithOptions(component string, opts Options) *slog.Logger {
 	return slog.New(slogHandler)
 }
 
-// DeleteLeveler deletes the leveler instance for the given component
+// DeleteLeveler deletes the leveler instance for the given component.
+// Existing loggers created before deletion continue to work with their old level,
+// but are disconnected from SetLevel/GetLevel.
 func DeleteLeveler(component string) error {
 	if component == "" {
 		return fmt.Errorf("component unspecified")

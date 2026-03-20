@@ -3,6 +3,7 @@ package logger
 import (
 	"context"
 	"log/slog"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -10,8 +11,24 @@ import (
 	"github.com/shashankram/slog-leveler/pkg/utils/ptr"
 )
 
+func TestMain(m *testing.M) {
+	SetDefault()
+	os.Exit(m.Run())
+}
+
+// resetComponentLeveler clears all entries from the componentLeveler sync.Map
+// and re-initializes the default component to prevent test pollution.
+func resetComponentLeveler() {
+	componentLeveler.Range(func(key, _ any) bool {
+		componentLeveler.Delete(key)
+		return true
+	})
+	SetDefault()
+}
+
 func TestDeleteLeveler(t *testing.T) {
 	r := require.New(t)
+	resetComponentLeveler()
 	l := New("delete")
 	err := SetLevel("delete", slog.LevelInfo)
 	r.NoError(err)
@@ -29,6 +46,7 @@ func TestDeleteLeveler(t *testing.T) {
 
 func TestDefaultLevelInheritence(t *testing.T) {
 	r := require.New(t)
+	resetComponentLeveler()
 
 	l1 := New("l1")
 	l2 := NewWithOptions("l2", Options{Level: ptr.To(slog.LevelDebug)})

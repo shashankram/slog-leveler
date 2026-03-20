@@ -26,9 +26,6 @@ const (
 )
 
 var (
-	// GlobalLevel is the slog.LevelVar for the default logger
-	GlobalLevel = &slog.LevelVar{} // default is INFO
-
 	levelNames = map[slog.Leveler]string{
 		LevelTrace: "TRACE",
 	}
@@ -85,7 +82,7 @@ func Reset(level slog.Level) {
 	})
 }
 
-// HTTPLelevelHandler handles HTTP requests to the log level of the default or
+// HTTPLevelHandler handles HTTP requests to the log level of the default or
 // component specific loggers
 // It accepts POST and PUT requests with the following query parameters:
 // - level=<level>: updates log level across all component loggers
@@ -127,13 +124,21 @@ func HTTPLevelHandler(w http.ResponseWriter, r *http.Request) {
 		levels[component] = level
 	}
 
-	// Update component specific log levels
-	for component, level := range levels {
-		err := SetLevel(component, level)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+	// Validate all components exist before mutating any levels
+	for component := range levels {
+		name := component
+		if name == "" {
+			name = DefaultComponent
+		}
+		if _, ok := componentLeveler.Load(name); !ok {
+			http.Error(w, fmt.Sprintf("logger not found for component: %s", component), http.StatusBadRequest)
 			return
 		}
+	}
+
+	// Update component specific log levels
+	for component, level := range levels {
+		MustSetLevel(component, level)
 		w.Write(fmt.Appendf(nil, "component %s log level set to: %s\n", component, strings.ToLower(levelName(level)))) // nolint: errcheck
 	}
 
